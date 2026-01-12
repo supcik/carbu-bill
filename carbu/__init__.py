@@ -15,6 +15,16 @@ DOCUMENTS_DIR = ROOT_DIR / "documents"
 BUILD_DIR = ROOT_DIR / "build"
 
 
+@app.after_request
+def disable_cache(response):
+    """Disable caching for all responses to prevent Cloudflare and browser caching"""
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    response.headers["ETag"] = None
+    return response
+
+
 def compile_typst_to_pdf(doc_id, data):
     """Background task to compile Typst template to PDF"""
     try:
