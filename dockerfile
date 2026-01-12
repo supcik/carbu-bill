@@ -1,5 +1,7 @@
 FROM python:3
 
+ARG TARGETARCH
+
 ENV POETRY_VERSION=2.2.1 \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_NO_INTERACTION=1 \
@@ -17,13 +19,12 @@ RUN poetry install --no-root --without dev --no-interaction --no-ansi
 RUN pip install gunicorn
 
 # Install typst for the correct architecture
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "x86_64" ]; then \
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
     TYPST_ARCH="x86_64-unknown-linux-musl"; \
-    elif [ "$ARCH" = "aarch64" ]; then \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
     TYPST_ARCH="aarch64-unknown-linux-musl"; \
     else \
-    echo "Unsupported architecture: $ARCH" && exit 1; \
+    echo "Unsupported architecture: $TARGETARCH" && exit 1; \
     fi && \
     curl -L https://github.com/typst/typst/releases/download/v$TYPST_VERSION/typst-${TYPST_ARCH}.tar.xz | tar xJ -C /tmp && \
     mv /tmp/typst-${TYPST_ARCH}/typst /usr/bin/typst 
