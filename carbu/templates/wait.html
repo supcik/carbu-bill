@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+<h1>Veuillez patienter...</h1>
+
+Votre document est en cours de génération. Vous serez redirigé automatiquement une fois prêt.
+<br><br>
+
+<div class="text-center">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            waitForUrl('/doc/{{ id }}.pdf').then(() => {
+                window.location.href = "download/?id={{ id }}";
+            });
+        });
+</script>
+{% endblock %}

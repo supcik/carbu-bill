@@ -1,0 +1,9 @@
+{
+    "name": "Erich Müller",
+    "street": "Bahnhofstrasse",
+    "building": "4a",
+    "zipcode": "8001",
+    "city": "Zürich",
+    "number": "1234",
+    "amount": "200"
+}
