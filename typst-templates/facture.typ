@@ -10,15 +10,29 @@
 #image("carbu.jpg", width: 100%)
 #let src = sys.inputs.at("data", default: "default.json")
 #let data = json(src)
-#let name = data.name
 
-*Payé par* :
+#let name = data.at("name", default: none)
+#let zipcode = data.at("zipcode", default: none)
+#let street = data.at("street", default: none)
+#let building = data.at("building", default: none)
+#let city = data.at("city", default: none)
+#let number = data.at("number", default: none)
+#let amount = if data.at("amount", default: "").find(regex("^\\d+$")) != none {
+  float(data.at("amount"))
+} else {
+  none
+}
 
-*#data.name*\
-#data.street #data.building\
-#data.zipcode #data.city\
-Compte prépayée numéro : *#data.number*\
-Montant à recharger : *CHF #num(float(data.amount), math: false, digits: 2, group: (size: 3, separator: "'"))*
+#if (name != none) [
+  *#name*\
+  #street #building\
+  #zipcode #city\
+]
+#if number != none [
+  Compte prépayée numéro : *#number*\
+]
+#if amount != none [
+  Montant à recharger : *CHF #num(amount, math: false, digits: 2, group: (size: 3, separator: "'"))*]
 
 #place(
   bottom,
@@ -37,15 +51,15 @@ Montant à recharger : *CHF #num(float(data.amount), math: false, digits: 2, gro
     reference-type: "NON", // QRR, SCOR, or NON
     font: "Liberation Sans",
 
-    debtor-name: data.name,
-    debtor-street: data.street,
-    debtor-building: data.building,
-    debtor-postal-code: data.zipcode,
-    debtor-city: data.city,
+    debtor-name: if (name != none) { name } else { "" },
+    debtor-street: street,
+    debtor-building: building,
+    debtor-postal-code: zipcode,
+    debtor-city: city,
     debtor-country: "CH",
 
-    additional-info: "Prépaiement " + data.number,
+    additional-info: "Prépaiement " + number,
 
-    amount: float(data.amount),
+    amount: if (amount == none) { 0 } else { amount },
   ),
 )
